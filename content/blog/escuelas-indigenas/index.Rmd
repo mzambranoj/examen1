@@ -1,0 +1,305 @@
+---
+title: "El rol de las escuelas indígenas en la educación mexicana"
+author: "Miguel Zambrano"
+date: "2021-09-18"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(sf) # trabajar con clase sf
+library(viridis) # choropleth en los mapas
+library(foreign) # leer dbf
+library(readxl)
+library(ggnewscale) # para tener dos escalas de colores en ggplot
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+# Mapa de escuelas indígenas por distrito
+
+```{r, include=FALSE}
+# Base de datos de escuelas indígenas (INEE)
+eb_ind <- read.csv("dta/hli_ini_1718_indigena.csv")
+#eb_ind <- read.csv("https://www.inee.edu.mx/wp-content/uploads/2019/08/hli_ini_1718_indigena.csv")
+
+# Mapa con los límites por municipio
+municipios <- st_read("dta/mapa/Estados_Mexico_TIP_1900_2015.shp")
+st_crs(municipios) <- 4326
+
+# Corrigiendo el formato de la longitud
+eb_ind$LON_DMS <- sub("\\.","", eb_ind$LON_DMS)
+eb_ind$LON_DMS <- sub(":",".", eb_ind$LON_DMS)
+eb_ind$LON_DMS <- gsub(":","", eb_ind$LON_DMS)
+
+# Corrigiendo el formato de la latitud
+eb_ind$LAT_DMS <- sub("\\.","", eb_ind$LAT_DMS)
+eb_ind$LAT_DMS <- sub(":",".", eb_ind$LAT_DMS)
+eb_ind$LAT_DMS <- gsub(":","", eb_ind$LAT_DMS)
+
+# Base de datos de colegios indígenas en clase sf
+eb_ind_sf <- st_as_sf(eb_ind, coords = c("LON_DMS", "LAT_DMS"), crs = 4326)
+
+# Revisión de colegios indígenas en cada municipio
+conteo_colegios <- st_within(eb_ind_sf, municipios, sparse = FALSE)
+
+# Adicionar variable con total de escuelas indígenas por municipio
+municipios <- mutate(municipios, escuelas_indigenas = apply(conteo_colegios, 2, sum))
+municipios$esc_ind_grupos <- cut(municipios$escuelas_indigenas, breaks = c(0,0.5,5,10,50,100,500,Inf),
+                                 labels=c("0", "1-5", "5-10", "10-50", "50-100", "100-500", ">500"))
+municipios$esc_ind_grupos[is.na(municipios$esc_ind_grupos)] <- "0"
+```
+
+
+
+```{r, echo=FALSE}
+ggplot(municipios) +
+  geom_sf(aes(fill=esc_ind_grupos)) +
+  scale_fill_viridis_d(name="Número de escuelas \nindígenas") +
+  ggtitle("Escuelas indígenas por municipio") +
+  theme_void() +
+  theme(axis.text=element_blank(),
+        plot.title = element_text(size=24, face = "bold", hjust = 0.5),
+        legend.text = element_text(size=14),
+        legend.title = element_text(size=16))
+
+```
+
+# Mapa de población indígena por distrito
+
+```{r, include=FALSE}
+# Datos de población por municipio 2010 (obtenido de http://www.inpi.gob.mx/cedulas/index.html)
+poblacion2010 <- read_excel("dta/poblacion-indigena-municipal-2010.xls", sheet=2)
+
+# Eliminar los totales estatales
+poblacion2010 <- filter(poblacion2010, MPO != "000")
+
+# Código de municipio y porcentaje población indigena en 2010
+poblacion2010 <- mutate(poblacion2010, Clave_Mpio = as.double(paste0(ENT,MPO)),
+                        porc_ind = (IPOB_INDI/TPOBTOT)*100)
+
+# Adjuntar fila con porcentajes a shp de municipios
+municipios <- left_join(municipios, subset(poblacion2010, select = c("Clave_Mpio", "porc_ind", "IPOB_INDI")), by = "Clave_Mpio")
+
+```
+
+```{r, echo=FALSE}
+ggplot(municipios) +
+  geom_sf(aes(fill=IPOB_INDI), color = "transparent") +
+  scale_fill_viridis(trans = "sqrt", name="Tamaño de la \npoblación indígena") +
+  ggtitle("Población indígena en el 2010") +
+  theme_void() +
+  theme(axis.text=element_blank(),
+        plot.title = element_text(size=24, face = "bold", hjust = 0.5),
+        legend.text = element_text(size=14),
+        legend.title = element_text(size=16))
+```
+
+
+# Porcentaje de alumnos repitentes
+```{r, include=FALSE}
+# Trayectoria educativa y laboral - general (INEE)
+trayectoria <- read.csv("dta/inee_generaral.csv", sep = "|")
+#trayectoria <- read.csv("https://www.inee.edu.mx/wp-content/uploads/2019/05/inee_generaral.csv", sep = "|")
+
+# Trayectoria educatvia y laboral - historia escolar (INEE)
+#hist_escolar <- read.csv("dta/inee_historia_escolar.csv", sep = "|")
+hist_escolar <- read.csv("https://www.inee.edu.mx/wp-content/uploads/2019/05/inee_historia_escolar.csv", sep = "|")
+
+# Crear variable que identifique y modificar variable de aprobados
+hist_escolar <- mutate(hist_escolar, identif = paste0(FOLIO1, FOLIOA, FOLIO, FOLIOK),
+                       desaprobado = ifelse(H3_5==1,0,ifelse(H3_5==2,1,NA)))
+
+# ¿Alumno repitió algún curso?
+repitentes <- hist_escolar %>% 
+  group_by(identif) %>% 
+  summarise(repite = sum(desaprobado, na.rm = TRUE)) %>%
+  mutate(repite = ifelse(repite >= 1, "REPITIÓ", ifelse(repite == 0,"NO REPITIÓ",NA)))
+
+# Unir a base general
+trayectoria <- mutate(trayectoria, identif = paste0(FOLIO1, FOLIOA, FOLIO, FOLIOK),
+                      asc_indi = ifelse(C1_5==1, "SÍ", ifelse(C1_5==2, "NO", NA)))
+trayectoria <- left_join(trayectoria, repitentes, by = "identif")
+
+```
+
+
+```{r, echo=FALSE}
+ggplot(data = trayectoria[!(is.na(trayectoria$asc_indi)|is.na(trayectoria$repite)),], aes(x = str_to_sentence(asc_indi), fill=str_to_sentence(repite))) +
+  geom_bar(position="fill", alpha = 0.6) +
+  ylab("Porcentaje") + xlab("¿Tiene ascendencia indígena?") +
+  ggtitle("Porcentaje de repitentes escolares según ascendencia") +
+  scale_fill_manual(name = "¿Repitió al menos\nuna vez?", values = c("purple", "orange")) +
+  theme(axis.text=element_text(size=14),
+        axis.title=element_text(size=16),
+        plot.title = element_text(size=20, face = "bold"),
+        legend.text = element_text(size=14),
+        legend.title = element_text(size=16))
+
+```
+
+# Nivel educativo alcanzado
+```{r, include=FALSE}
+# Base de datos con nivel educativo alcanzado
+nivel_educativo <- trayectoria %>%
+  group_by(asc_indi, nivel = as.factor(C7_1_NIVEL)) %>% 
+  summarise(total=n(), .groups = "drop") %>%
+  filter(!(is.na(nivel) | is.na(asc_indi))) %>% 
+  group_by(asc_indi) %>% 
+  mutate(porc_tot = total/sum(total)) %>% 
+  subset(select = - total) %>% 
+  spread(asc_indi, porc_tot)
+
+```
+
+
+```{r, echo=FALSE, warning=FALSE}
+ggplot(nivel_educativo) +
+  geom_point(aes(x=nivel, y=SÍ, colour="Sí"), size=12, alpha=0.5) +
+  geom_point(aes(x=nivel, y=NO, colour="No"), size=12, alpha=0.5) +
+  geom_segment(aes(x=nivel, xend=nivel, y=SÍ, yend=NO), color="black") +
+  coord_flip() +
+  xlab("Nivel educativo") + ylab("Porcentaje que alcanzó dicho nivel") +
+  ggtitle("Nivel educativo alcanzado") +
+  scale_colour_manual(name="Ascendencia\nindígena", values = c(Sí="red",No="green")) +
+  scale_x_discrete(labels = c("Ninguno", "Pre-escolar", "Primaria", "Secundaria", "Preparatoria o\n Bachillerato", "Normal", "Carrera Técnica\n con Bachillerato", "Carrera Técnica\n sin Bachillerato", "Profesional", "Maestría o\n Doctorado")) +
+  theme(axis.text=element_text(size=14),
+        axis.title=element_text(size=20),
+        plot.title = element_text(size=24, face = "bold"),
+        legend.text = element_text(size=14),
+        legend.title = element_text(size=16))
+
+```
+
+
+# Scatterplot desempeño en PLANEA vs. Porcentaje de población indígena
+```{r, include=FALSE}
+# Base de datos escuelas (INEE)
+eb <- read.csv("dta/hli_fin_1617.csv")
+#eb <- read.csv("https://www.inee.edu.mx/wp-content/uploads/2019/08/hli_fin_1617.csv")
+
+# Base de datos resultados de la prueba Planea 2017
+planea <- read.csv("dta/planea_17sec_ELCE_ElSEN_V2.csv", sep="|") %>% 
+#planea <- read.csv("https://www.inee.edu.mx/wp-content/uploads/2019/07/planea_17sec_ELCE_ElSEN_V2.csv", sep="|") %>% 
+  rename(CLAVECCT = ï..CCT) %>% 
+  rename(TURNO_L = TURNO) %>% 
+  rename(TURNO = ID_TURNO)
+
+# Verificación: en escuelas indígenas casi siempre la mayoría de alumnos dominan una lengua indígena
+eb_ind <- mutate(eb_ind, porc_habl_indi = 1-(NUMEMAT_LEN6/(NUMEMAT_LEN1+NUMEMAT_LEN2+NUMEMAT_LEN3+NUMEMAT_LEN4+NUMEMAT_LEN5+NUMEMAT_LEN6)))
+
+# Variable: del total de escuelas, cuales son escuelas indígenas
+eb <- mutate(eb, escuela_indigena = ifelse(CLAVECCT %in% eb_ind$CLAVECCT,1,0))
+
+# Nueva base, sólo escuelas en donde predominan alumnos con lengua indígena
+eb_may_ind <- subset(eb, PCTN_HLI >= 50)
+
+# Base de datos escuelas que participaron de Planea 2017 secundaria
+escuelas <- inner_join(eb, planea, by=c("CLAVECCT", "TURNO"))
+
+```
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Gráfica resultados lenguaje según porcentaje de alumnos hablantes de lengua indígena
+ggplot(escuelas, aes(x=PCTN_HLI)) +
+  geom_point(aes(y=LYC_M), color="blue", alpha=0.6) +
+  geom_smooth(aes(y=LYC_M), stat = "smooth", method = "lm", color="orange", size=1.2) +
+  xlab("Porcentaje de hablantes de alguna lengua indígena") + ylab("Puntaje en Lenguaje y Comunicación") +
+  ggtitle("Resultados de prueba PLANEA por escuela")+
+  labs(subtitle = "Relación entre puntaje vs. Porcentaje de alumnos hablantes de alguna lengua indígena") +
+  theme(axis.text=element_text(size=16),
+        axis.title=element_text(size=20),
+        plot.title = element_text(size=24, face = "bold"),
+        plot.subtitle = element_text(size=20))
+
+```
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Gráfica resultados matemáticas según porcentaje de alumnos hablantes de lengua indígena
+ggplot(escuelas, aes(x=PCTN_HLI)) +
+  geom_point(aes(y=MAT_M), color="red", alpha=0.6) +
+  geom_smooth(aes(y=MAT_M), stat = "smooth", method = "lm", color="purple", size=1.2) +
+  xlab("Porcentaje de hablantes de alguna lengua indígena") + ylab("Puntaje en Matemáticas") +
+  ggtitle("Resultados de prueba PLANEA por escuela") +
+  labs(subtitle = "Relación entre puntaje vs. Porcentaje de alumnos hablantes de alguna lengua indígena") +
+  theme(axis.text=element_text(size=16),
+        axis.title=element_text(size=20),
+        plot.title = element_text(size=24, face = "bold"),
+        plot.subtitle = element_text(size=20))
+
+```
+
+
+¿Estudiar en escuela indígena genera mejores resultados?
+```{r, include=FALSE}
+# Resultados PLANEA primaria
+planea_prim <- read.csv("dta/planea_18prim_ELCE_ElSEN.csv", sep="|") %>%
+#planea_prim <- read.csv("https://www.inee.edu.mx/wp-content/uploads/2019/07/planea_18prim_ELCE_ElSEN.csv", sep="|") %>% 
+  rename(CLAVECCT = CCT) %>% 
+  rename(TURNO_L = TURNO) %>% 
+  rename(TURNO = ID_TURNO)
+
+# Uniendo bases
+escuelas_prim <- inner_join(eb, planea_prim, by=c("CLAVECCT", "TURNO"))
+```
+
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Gráfica resultados lenguaje según porcentaje de alumnos hablantes de lengua indígena (escuela indígena vs regular)
+ggplot(escuelas_prim, aes(x=PCTN_HLI, group = as.factor(escuela_indigena))) +
+  geom_point(aes(y=LYC_M, colour=as.factor(escuela_indigena)), alpha=0.6) +
+  scale_colour_manual(name="Tipo de escuela", labels=c("Escuela regular", "Escuela indígena"), values=hcl(c(15,195), 100, 80)) +
+  new_scale_colour() +
+  geom_smooth(aes(y=LYC_M, colour=as.factor(escuela_indigena)), stat = "smooth", method = "lm", size=1.2) +
+  scale_colour_manual(name="Tipo de escuela", labels=c("Escuela regular", "Escuela indígena"), values=hcl(c(15,195), 100, 50)) +
+  xlab("Porcentaje de hablantes de alguna lengua indígena") + ylab("Puntaje en Lenguaje y Comunicación") +
+  ggtitle("Resultados de prueba PLANEA por escuela (primarias)")+
+  labs(subtitle = "Relación entre puntaje vs. Porcentaje de alumnos hablantes de alguna lengua indígena") +
+  theme(axis.text=element_text(size=16),
+        axis.title=element_text(size=20),
+        plot.title = element_text(size=24, face = "bold"),
+        plot.subtitle = element_text(size=20))
+
+```
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+# Gráfica resultados matemáticas según porcentaje de alumnos hablantes de lengua indígena (escuela indígena vs regular)
+ggplot(escuelas_prim, aes(x=PCTN_HLI, group = as.factor(escuela_indigena))) +
+  geom_point(aes(y=MAT_M, colour=as.factor(escuela_indigena)), alpha=0.6) +
+  scale_colour_manual(name="Tipo de escuela", labels=c("Escuela regular", "Escuela indígena"), values=hcl(c(15,195), 100, 80)) +
+  new_scale_colour() +
+  geom_smooth(aes(y=MAT_M, colour=as.factor(escuela_indigena)), stat = "smooth", method = "lm", size=1.2) +
+  scale_colour_manual(name="Tipo de escuela", labels=c("Escuela regular", "Escuela indígena"), values=hcl(c(15,195), 100, 50)) +
+  xlab("Porcentaje de hablantes de alguna lengua indígena") + ylab("Puntaje en Matemáticas") +
+  ggtitle("Resultados de prueba PLANEA por escuela (primarias)")+
+  labs(subtitle = "Relación entre puntaje vs. Porcentaje de alumnos hablantes de alguna lengua indígena") +
+  theme(axis.text=element_text(size=16),
+        axis.title=element_text(size=20),
+        plot.title = element_text(size=24, face = "bold"),
+        plot.subtitle = element_text(size=20))
+
+```
+
+
+
+
+
+
+

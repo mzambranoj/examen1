@@ -1,0 +1,11 @@
+1.- Absolutos		= Datos educativos por municipio, valores absolutos
+
+ems_ini_1718		= Educación media superior (EMS inicio 2017-2018)
+
+hli_fin_1617		= Educación básica (EB fin 2016-2017)
+
+hli_ini_1718_indigena	= Escuelas indígenas 2017-2018
+
+Municipios_peepi	= Datos por municipio 2015
+
+
