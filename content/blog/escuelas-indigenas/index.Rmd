@@ -3,7 +3,9 @@ title: "El rol de las escuelas indígenas en la educación mexicana"
 author: "Miguel Zambrano"
 date: "2021-09-18"
 output: html_document
+excerpt: Breve análisis sobre el alcance y la eficiencia de las escuelas indígenas en el desempeño de los hablantes indígenas.
 ---
+<style> body {text-align: justify} </style>
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -14,22 +16,17 @@ library(foreign) # leer dbf
 library(readxl)
 library(ggnewscale) # para tener dos escalas de colores en ggplot
 ```
+Según el reporte del Banco Mundial "[Población Indígnea en América Latina en 2010](https://documents1.worldbank.org/curated/en/541651467999959129/pdf/Latinoam%C3%A9rica-ind%C3%ADgena-en-el-siglo-XXI-primera-d%C3%A9cada.pdf)", México poseía la población indígena más grande de toda latinoamérica (15% del total de su población). A pesar de ello, diversos indicadores daban luces de que las políticas públicas no contribuían lo suficiente a generar un espacio de igualdad para estas poblaciones. El mismo reporte indicaba que la probabilidad de nacer en un hogar pobre aumentaba en 9% si es que alguno de los padres era indígena.
 
-## R Markdown
+En cuanto a indicadores educativos, del total de la población indígena, sólo el 17% de los que residían en zonas urbanas habían logrado concluir el nivel de educación secundaria, mientras que la tasa caía a 5% para aquellos que vivían en zonas rurales. Sin embargo, otros indicadores parecían mostrar que esta tendencia era representativa de la generación anterior, pues, en contraste, la asistencia escolar de niños indígenas entre los 12 y 18 años alcanzaba el 72% en zonas urbanas y 67% en zonas rurales. Estas tasas no eran tan lejanas a las de la población no indígena para el mismo grupo etario (75%). En cualquier caso, la igualdad de condiciones entre la población indígena y no indígena era (y sigue siendo) un reto presente, siendo la educación la base fundamental para alcanzar este objetivo.
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+México comenzó con políticas educativas orientadas al desarrollo de la población indígena en 1978 con la creación de la [Dirección General de Educación Indígena (DGEI)](http://dgei.basica.sep.gob.mx/es/acerca/quienes-somos.html), no obstante, el desempeño de esta institución no fue apropiado sino hasta el 2009 con [la reformulación de sus políticas](https://inicialsayra.weebly.com/uploads/3/1/1/9/31192859/programa_de_educacion_inicial_y_basica_para_poblaciones_indigenas.pdf). Con ello, las escuelas indígenas (que ya tenían años en funcionamiento) pasaron a cumplir un rol más activo en la formación de su población objetivo. Estas escuelas tienen como fin proveer un ambiente educativo ideal para aquellas poblaciones, no sólo mediante el dictado de clases en lenguas originarias, sino también incorporando sus culturas como parte del currículo.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-
-## Including Plots
-
-You can also embed plots, for example:
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Datos del [2015](https://www.inegi.org.mx/app/indicadores/?t=123&ag=00#divFV6207019014) indican que la población indígena ha crecido en comparación a las estimaciones anteriores del Banco Central, representando en dicho año el 21.5% de la población mexicana. Motivado por la importancia de la población indígena en México, a continuación se desarrollará un breve análisis exploratorio sobre las condiciones educativas actuales de la población indígena y el rol que cumplen las escuelas indígenas. Dado que no hay encuestas con datos recientes sobre el desempeño de la población indígena en educación, usaré "población con ascendencia indígena" y "población con lengua materna indígena" como proxys de esta.
 
 
-# Mapa de escuelas indígenas por distrito
+
+### ¿Cómo se distribuyen las escuelas indígenas en el territorio nacional?
 
 ```{r, include=FALSE}
 # Base de datos de escuelas indígenas (INEE)
@@ -63,7 +60,7 @@ municipios$esc_ind_grupos <- cut(municipios$escuelas_indigenas, breaks = c(0,0.5
 municipios$esc_ind_grupos[is.na(municipios$esc_ind_grupos)] <- "0"
 ```
 
-
+Para el año 2015, el número total de escuelas indígenas ascendía a un total de 20030, representando el 9% de todas las escuelas mexicanas. Tal como se puede ver en el siguiente mapa, la mayoría de estas están distribuidas en las zonas noroeste y sureste del país. La gran mayoría de municipios no cuenta con ninguna escuela indígena. Esto no necesariamente debe significar algo negativo, pues la oferta educativa debe ir acorde a la demanda de la población.
 
 ```{r, echo=FALSE}
 ggplot(municipios) +
@@ -72,13 +69,13 @@ ggplot(municipios) +
   ggtitle("Escuelas indígenas por municipio") +
   theme_void() +
   theme(axis.text=element_blank(),
-        plot.title = element_text(size=24, face = "bold", hjust = 0.5),
-        legend.text = element_text(size=14),
-        legend.title = element_text(size=16))
+        plot.title = element_text(size=20, face = "bold", hjust = 0.5),
+        legend.text = element_text(size=12),
+        legend.title = element_text(size=14))
 
 ```
 
-# Mapa de población indígena por distrito
+En ese sentido, mediante el siguiente mapa podemos observar que la población indígena está distribuida de forma similar a los colegios. La mayoría de municipios tienen un escaso o nulo número de personas indígenas. Los estados con mayor condensación de población indígena son los sureños: Chiapas, Quintana Roo y Yucatan. Consecuentemente, estos son también los estados con un mayor número de escuelas indígenas.
 
 ```{r, include=FALSE}
 # Datos de población por municipio 2010 (obtenido de http://www.inpi.gob.mx/cedulas/index.html)
@@ -103,59 +100,70 @@ ggplot(municipios) +
   ggtitle("Población indígena en el 2010") +
   theme_void() +
   theme(axis.text=element_blank(),
-        plot.title = element_text(size=24, face = "bold", hjust = 0.5),
-        legend.text = element_text(size=14),
-        legend.title = element_text(size=16))
+        plot.title = element_text(size=20, face = "bold", hjust = 0.5),
+        legend.text = element_text(size=12),
+        legend.title = element_text(size=14))
 ```
 
+La similitud entre la distribución de las escuelas indígenas y la distribución de la población indígena es una primera buena señal de que se ha logrado una correcta focalización mediante la implementación de estas escuelas. En ese sentido, se esperaría que a ellas asistan la gran mayoría de alumnos que se identifiquen como pertenecientes a alguna comunidad indígena o que tengan como lengua materna una distinta al castellano. Sin embargo, esto no es del todo cierto.
 
-# Porcentaje de alumnos repitentes
+La [encuesta sobre trayectorias educativas y laborales aplicada en el 2015 a una muestra de jóvenes residentes de las Zonas Metropolitanas del Valle de México, Monterrey y Veracruz](https://www.inee.edu.mx/wp-content/uploads/2019/08/Caracteristicas-Generales-de-la-ETEL-2015.pdf), indica que sólo el 9% de los encuestados que tenían ascendencia indígena asistieron a una escuela indígena. Si bien esta no es una muestra representativa a nivel país y además, no todo descendiente indígena se identifica como población indígena, da luces de que podrían existir problemas de focalización en estas escuelas, siendo que, para el 2010, tan sólo Veracruz era el tercer estado con mayor población indígena y el tercer estado con más escuelas indígenas (según datos del 2017). Es decir, la ubicación de las escuelas en los determinados estado era correcta, más no su capacidad para captar a la población objetivo.
+
+
+
+### ¿Existen diferencias en el logro académico?
+
 ```{r, include=FALSE}
-# Trayectoria educativa y laboral - general (INEE)
-trayectoria <- read.csv("dta/inee_generaral.csv", sep = "|")
-#trayectoria <- read.csv("https://www.inee.edu.mx/wp-content/uploads/2019/05/inee_generaral.csv", sep = "|")
+# Base de datos con rendimiento académico del encuestado
+etel_esc <- read.dbf("dta/TESCOLAR.dbf")
 
-# Trayectoria educatvia y laboral - historia escolar (INEE)
-#hist_escolar <- read.csv("dta/inee_historia_escolar.csv", sep = "|")
-hist_escolar <- read.csv("https://www.inee.edu.mx/wp-content/uploads/2019/05/inee_historia_escolar.csv", sep = "|")
+# Base de datos con información general del encuestado
+etel_el <- read.dbf("dta/TELEGIDO.dbf")
 
-# Crear variable que identifique y modificar variable de aprobados
-hist_escolar <- mutate(hist_escolar, identif = paste0(FOLIO1, FOLIOA, FOLIO, FOLIOK),
-                       desaprobado = ifelse(H3_5==1,0,ifelse(H3_5==2,1,NA)))
+# Modificar variable de aprobados
+etel_esc <- mutate(etel_esc, desaprobado = ifelse(P3_15==1,0,ifelse(P3_15==2,1,NA)))
 
 # ¿Alumno repitió algún curso?
-repitentes <- hist_escolar %>% 
-  group_by(identif) %>% 
+repitentes <- etel_esc %>% 
+  group_by(FOLIO_ELE) %>% 
   summarise(repite = sum(desaprobado, na.rm = TRUE)) %>%
   mutate(repite = ifelse(repite >= 1, "REPITIÓ", ifelse(repite == 0,"NO REPITIÓ",NA)))
 
+# Modificar variable ascendencia indígena
+etel_el <- mutate(etel_el, asc_indi = ifelse(P1_2==1, "SÍ", ifelse(P1_2==2, "NO", NA)))
+
 # Unir a base general
-trayectoria <- mutate(trayectoria, identif = paste0(FOLIO1, FOLIOA, FOLIO, FOLIOK),
-                      asc_indi = ifelse(C1_5==1, "SÍ", ifelse(C1_5==2, "NO", NA)))
-trayectoria <- left_join(trayectoria, repitentes, by = "identif")
+etel_el <- left_join(etel_el, repitentes, by = "FOLIO_ELE")
+
+# Tabla ascendencia indígena vs. estudió en escuela indígena
+table(etel_el$asc_indi, etel_el$P5_4_3)
+
+# Tabla repitentes por ascendencia
+table(etel_el$asc_indi,etel_el$repite) # 44.9 vs 54.4
 
 ```
 
+En cuanto al desempeño educativo de la población con ascendencia indígena, la misma encuesta del 2015 nos permite saber que sólo el 44.9% de ellos ha repetido al menos una vez algún año de estudio, frente a un 54.4% del resto de la población. Esto indicaría que el desempeño educativo es mejor para quienes tienen ascendencia indígena, incluso si no se encuentran estudiando en una escuela indígena.
 
 ```{r, echo=FALSE}
-ggplot(data = trayectoria[!(is.na(trayectoria$asc_indi)|is.na(trayectoria$repite)),], aes(x = str_to_sentence(asc_indi), fill=str_to_sentence(repite))) +
+# Gráfico: porcentaje de repitentes entre ascendencia indígena y no ascendencia indígiena
+ggplot(data = etel_el[!(is.na(etel_el$asc_indi)|is.na(etel_el$repite)),], aes(x = str_to_sentence(asc_indi), fill=str_to_sentence(repite))) +
   geom_bar(position="fill", alpha = 0.6) +
   ylab("Porcentaje") + xlab("¿Tiene ascendencia indígena?") +
   ggtitle("Porcentaje de repitentes escolares según ascendencia") +
   scale_fill_manual(name = "¿Repitió al menos\nuna vez?", values = c("purple", "orange")) +
   theme(axis.text=element_text(size=14),
         axis.title=element_text(size=16),
-        plot.title = element_text(size=20, face = "bold"),
+        plot.title = element_text(size=18, face = "bold", hjust = 0.3),
         legend.text = element_text(size=14),
         legend.title = element_text(size=16))
 
 ```
 
-# Nivel educativo alcanzado
 ```{r, include=FALSE}
 # Base de datos con nivel educativo alcanzado
-nivel_educativo <- trayectoria %>%
-  group_by(asc_indi, nivel = as.factor(C7_1_NIVEL)) %>% 
+nivel_educativo <- etel_el %>%
+  group_by(asc_indi, nivel = as.factor(P4_1_1)) %>% 
   summarise(total=n(), .groups = "drop") %>%
   filter(!(is.na(nivel) | is.na(asc_indi))) %>% 
   group_by(asc_indi) %>% 
@@ -165,6 +173,7 @@ nivel_educativo <- trayectoria %>%
 
 ```
 
+Para complementar el análisis anterior, observemos el máximo nivel educativo alcanzado por cada grupo. El porcentaje de la población indígena que alcanza niveles de educación bajos es, por lo general, mayor que el porcentaje de la población no indígena en dichos niveles. Contrariamente, para niveles superiores, una menor proporción de la población indígena alcanza dicho logro educativo. La diferencia mas notoria se encuentra en la población con nivel profesional, siendo sólo el 15% de la población indígena, frente a el 26% de la población no indígena. Este gráfico permite concluir que, aunque el desempeño en la escuela puede ser superior para la población indígena, su logro educativo es inferior. Debido muy probablemente a menores oportunidades.
 
 ```{r, echo=FALSE, warning=FALSE}
 ggplot(nivel_educativo) +
@@ -175,17 +184,24 @@ ggplot(nivel_educativo) +
   xlab("Nivel educativo") + ylab("Porcentaje que alcanzó dicho nivel") +
   ggtitle("Nivel educativo alcanzado") +
   scale_colour_manual(name="Ascendencia\nindígena", values = c(Sí="red",No="green")) +
-  scale_x_discrete(labels = c("Ninguno", "Pre-escolar", "Primaria", "Secundaria", "Preparatoria o\n Bachillerato", "Normal", "Carrera Técnica\n con Bachillerato", "Carrera Técnica\n sin Bachillerato", "Profesional", "Maestría o\n Doctorado")) +
-  theme(axis.text=element_text(size=14),
-        axis.title=element_text(size=20),
-        plot.title = element_text(size=24, face = "bold"),
-        legend.text = element_text(size=14),
-        legend.title = element_text(size=16))
+  scale_x_discrete(labels = c("Ninguno", "Pre-escolar", "Primaria", "Secundaria", "Carrera Técnica con\nSecundaria Completa", "Preparatoria o\n Bachillerato", "Carrera Técnica con \nPreparatoria Terminada", "Normal", "Profesional", "Maestría o\nDoctorado")) +
+  theme(axis.text=element_text(size=12),
+        axis.title=element_text(size=16),
+        plot.title = element_text(size=20, face = "bold"),
+        legend.text = element_text(size=12),
+        legend.title = element_text(size=14))
 
 ```
 
 
-# Scatterplot desempeño en PLANEA vs. Porcentaje de población indígena
+&nbsp;
+
+&nbsp;
+
+### ¿Estudiar en escuelas indígenas genera mejores resultados?
+
+Finalmente, veamos los resultados de aprendizaje en poblaciones indígenas a partir de la prueba [PLANEA 2017](https://www.inee.edu.mx/wp-content/uploads/2019/07/Resultados2017-1.pdf) aplicada a alumnos de secundaria.
+
 ```{r, include=FALSE}
 # Base de datos escuelas (INEE)
 eb <- read.csv("dta/hli_fin_1617.csv")
@@ -220,11 +236,11 @@ ggplot(escuelas, aes(x=PCTN_HLI)) +
   geom_smooth(aes(y=LYC_M), stat = "smooth", method = "lm", color="orange", size=1.2) +
   xlab("Porcentaje de hablantes de alguna lengua indígena") + ylab("Puntaje en Lenguaje y Comunicación") +
   ggtitle("Resultados de prueba PLANEA por escuela")+
-  labs(subtitle = "Relación entre puntaje vs. Porcentaje de alumnos hablantes de alguna lengua indígena") +
-  theme(axis.text=element_text(size=16),
-        axis.title=element_text(size=20),
-        plot.title = element_text(size=24, face = "bold"),
-        plot.subtitle = element_text(size=20))
+  labs(subtitle = "Relación entre puntaje vs.\nPorcentaje de alumnos hablantes de alguna lengua indígena") +
+  theme(axis.text=element_text(size=14),
+        axis.title=element_text(size=14),
+        plot.title = element_text(size=20, face = "bold"),
+        plot.subtitle = element_text(size=12))
 
 ```
 
@@ -236,16 +252,18 @@ ggplot(escuelas, aes(x=PCTN_HLI)) +
   geom_smooth(aes(y=MAT_M), stat = "smooth", method = "lm", color="purple", size=1.2) +
   xlab("Porcentaje de hablantes de alguna lengua indígena") + ylab("Puntaje en Matemáticas") +
   ggtitle("Resultados de prueba PLANEA por escuela") +
-  labs(subtitle = "Relación entre puntaje vs. Porcentaje de alumnos hablantes de alguna lengua indígena") +
-  theme(axis.text=element_text(size=16),
-        axis.title=element_text(size=20),
-        plot.title = element_text(size=24, face = "bold"),
-        plot.subtitle = element_text(size=20))
+  labs(subtitle = "Relación entre puntaje vs.\nPorcentaje de alumnos hablantes de alguna lengua indígena") +
+  theme(axis.text=element_text(size=14),
+        axis.title=element_text(size=14),
+        plot.title = element_text(size=20, face = "bold"),
+        plot.subtitle = element_text(size=12))
 
 ```
 
+Tanto en Lenguaje y Comunicación como en Matemáticas, el puntaje promedio obtenido por escuela disminuye a medida que el porcentaje de hablantes de alguna lengua indígena aumenta. Este es un resultado esperable. Al no tener los medios para aprender en su lengua materna, estudiar será considerablemente más complicado. Sin embargo, las escuelas indígenas existen precisamente para solucionar este problema. Lo esperable sería que a medida que aumenta el porcentaje de alumnos hablantes de lengua originaria dentro de escuelas indígenas, los resultados de aprendizaje no disminuyan.
 
-¿Estudiar en escuela indígena genera mejores resultados?
+Para comprobar ello, el siguiente gráfico toma los resultados de la prueba [PLANEA 2018](https://www.inee.edu.mx/wp-content/uploads/2019/07/Resultados2018.pdf) para primaria y separa a las escuelas entre indígenas y regulares.
+
 ```{r, include=FALSE}
 # Resultados PLANEA primaria
 planea_prim <- read.csv("dta/planea_18prim_ELCE_ElSEN.csv", sep="|") %>%
@@ -258,48 +276,52 @@ planea_prim <- read.csv("dta/planea_18prim_ELCE_ElSEN.csv", sep="|") %>%
 escuelas_prim <- inner_join(eb, planea_prim, by=c("CLAVECCT", "TURNO"))
 ```
 
-
-
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 # Gráfica resultados lenguaje según porcentaje de alumnos hablantes de lengua indígena (escuela indígena vs regular)
 ggplot(escuelas_prim, aes(x=PCTN_HLI, group = as.factor(escuela_indigena))) +
   geom_point(aes(y=LYC_M, colour=as.factor(escuela_indigena)), alpha=0.6) +
-  scale_colour_manual(name="Tipo de escuela", labels=c("Escuela regular", "Escuela indígena"), values=hcl(c(15,195), 100, 80)) +
+  scale_colour_manual(name="Tipo de\nescuela", labels=c("Regular", "Indígena"), values=hcl(c(15,195), 100, 80)) +
   new_scale_colour() +
   geom_smooth(aes(y=LYC_M, colour=as.factor(escuela_indigena)), stat = "smooth", method = "lm", size=1.2) +
-  scale_colour_manual(name="Tipo de escuela", labels=c("Escuela regular", "Escuela indígena"), values=hcl(c(15,195), 100, 50)) +
+  scale_colour_manual(name="Tipo de\nescuela", labels=c("Regular", "Indígena"), values=hcl(c(15,195), 100, 50)) +
   xlab("Porcentaje de hablantes de alguna lengua indígena") + ylab("Puntaje en Lenguaje y Comunicación") +
-  ggtitle("Resultados de prueba PLANEA por escuela (primarias)")+
-  labs(subtitle = "Relación entre puntaje vs. Porcentaje de alumnos hablantes de alguna lengua indígena") +
-  theme(axis.text=element_text(size=16),
-        axis.title=element_text(size=20),
-        plot.title = element_text(size=24, face = "bold"),
-        plot.subtitle = element_text(size=20))
+  ggtitle("Resultados de prueba PLANEA por escuela")+
+  labs(subtitle = "Relación entre puntaje vs.\nPorcentaje de alumnos hablantes de alguna lengua indígena") +
+  theme(axis.text=element_text(size=14),
+        axis.title=element_text(size=14),
+        plot.title = element_text(size=20, face = "bold"),
+        plot.subtitle = element_text(size=12),
+        legend.text = element_text(size=12),
+        legend.title = element_text(size=14))
+
 
 ```
-
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 # Gráfica resultados matemáticas según porcentaje de alumnos hablantes de lengua indígena (escuela indígena vs regular)
 ggplot(escuelas_prim, aes(x=PCTN_HLI, group = as.factor(escuela_indigena))) +
   geom_point(aes(y=MAT_M, colour=as.factor(escuela_indigena)), alpha=0.6) +
-  scale_colour_manual(name="Tipo de escuela", labels=c("Escuela regular", "Escuela indígena"), values=hcl(c(15,195), 100, 80)) +
+  scale_colour_manual(name="Tipo de\nescuela", labels=c("Regular", "Indígena"), values=hcl(c(15,195), 100, 80)) +
   new_scale_colour() +
   geom_smooth(aes(y=MAT_M, colour=as.factor(escuela_indigena)), stat = "smooth", method = "lm", size=1.2) +
-  scale_colour_manual(name="Tipo de escuela", labels=c("Escuela regular", "Escuela indígena"), values=hcl(c(15,195), 100, 50)) +
+  scale_colour_manual(name="Tipo de\nescuela", labels=c("Regular", "Indígena"), values=hcl(c(15,195), 100, 50)) +
   xlab("Porcentaje de hablantes de alguna lengua indígena") + ylab("Puntaje en Matemáticas") +
-  ggtitle("Resultados de prueba PLANEA por escuela (primarias)")+
-  labs(subtitle = "Relación entre puntaje vs. Porcentaje de alumnos hablantes de alguna lengua indígena") +
-  theme(axis.text=element_text(size=16),
-        axis.title=element_text(size=20),
-        plot.title = element_text(size=24, face = "bold"),
-        plot.subtitle = element_text(size=20))
+  ggtitle("Resultados de prueba PLANEA por escuela")+
+  labs(subtitle = "Relación entre puntaje vs.\nPorcentaje de alumnos hablantes de alguna lengua indígena") +
+  theme(axis.text=element_text(size=14),
+        axis.title=element_text(size=14),
+        plot.title = element_text(size=20, face = "bold"),
+        plot.subtitle = element_text(size=12),
+        legend.text = element_text(size=12),
+        legend.title = element_text(size=14))
+
 
 ```
 
+Mediante el ajuste de un modelo lineal simple, los gráficos muestran un efecto ambiguo en los resultados de los alumnos de escuelas indígenas. Por un lado se cumple el supuesto anterior: en las escuelas indígenas el puntaje no varía a medida que aumenta el porcentaje de alumnos que hablan una lengua indígena. No sucede lo mismo con las escuelas regulares. Sin embargo, el puntaje, a pesar de no variar mucho, se mantiene bajo. En ese sentido, las escuelas regulares tienen mejores resultados incluso cuando la mitad del alumnado habla alguna lengua indígena. Las escuelas indígenas recién superan en resultado (aunque muy ligeramente) a las regulares cuando la totalidad del alumnado habla lenguas indígenas.
 
+La conclusión a la que lleva esta revisión de datos es que las escuelas indígenas en México aún tienen mucho por mejorar. La oferta educativa parece estar bien distribuida, pero no logra alcanzar a toda su población objetivo. Tan importante como ello, no parecen haber efectos realmente positivos en la educación impartidas dentro de estas escuelas.
 
-
-
+Es necesario señalar que esta ha sido una simple revisión de datos brutos. Un correcto análisis sobre la eficiencia de las escuelas indígenas requiere de un estudio complejo como una evaluación de impacto.
 
 

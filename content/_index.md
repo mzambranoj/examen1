@@ -8,7 +8,7 @@ images:
 - img/mila.jpg
 show_action_link: true
 show_social_links: false
-subtitle: Un blog aún en desarrollo
+subtitle: Un blog aún en desarrollo...
 text_align_left: false
 title: Miguel Zambrano
 type: home

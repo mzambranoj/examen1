@@ -3,42 +3,45 @@ title: "El rol de las escuelas indígenas en la educación mexicana"
 author: "Miguel Zambrano"
 date: "2021-09-18"
 output: html_document
+excerpt: Breve análisis sobre el alcance y la eficiencia de las escuelas indígenas en el desempeño de los hablantes indígenas.
 ---
 
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
 
 
-<div id="r-markdown" class="section level2">
-<h2>R Markdown</h2>
-<p>This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <a href="http://rmarkdown.rstudio.com" class="uri">http://rmarkdown.rstudio.com</a>.</p>
-<p>When you click the <strong>Knit</strong> button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:</p>
-</div>
-<div id="including-plots" class="section level2">
-<h2>Including Plots</h2>
-<p>You can also embed plots, for example:</p>
-<p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
-</div>
-<div id="mapa-de-escuelas-indígenas-por-distrito" class="section level1">
-<h1>Mapa de escuelas indígenas por distrito</h1>
+<style> body {text-align: justify} </style>
+<p>Según el reporte del Banco Mundial “<a href="https://documents1.worldbank.org/curated/en/541651467999959129/pdf/Latinoam%C3%A9rica-ind%C3%ADgena-en-el-siglo-XXI-primera-d%C3%A9cada.pdf">Población Indígnea en América Latina en 2010</a>”, México poseía la población indígena más grande de toda latinoamérica (15% del total de su población). A pesar de ello, diversos indicadores daban luces de que las políticas públicas no contribuían lo suficiente a generar un espacio de igualdad para estas poblaciones. El mismo reporte indicaba que la probabilidad de nacer en un hogar pobre aumentaba en 9% si es que alguno de los padres era indígena.</p>
+<p>En cuanto a indicadores educativos, del total de la población indígena, sólo el 17% de los que residían en zonas urbanas habían logrado concluir el nivel de educación secundaria, mientras que la tasa caía a 5% para aquellos que vivían en zonas rurales. Sin embargo, otros indicadores parecían mostrar que esta tendencia era representativa de la generación anterior, pues, en contraste, la asistencia escolar de niños indígenas entre los 12 y 18 años alcanzaba el 72% en zonas urbanas y 67% en zonas rurales. Estas tasas no eran tan lejanas a las de la población no indígena para el mismo grupo etario (75%). En cualquier caso, la igualdad de condiciones entre la población indígena y no indígena era (y sigue siendo) un reto presente, siendo la educación la base fundamental para alcanzar este objetivo.</p>
+<p>México comenzó con políticas educativas orientadas al desarrollo de la población indígena en 1978 con la creación de la <a href="http://dgei.basica.sep.gob.mx/es/acerca/quienes-somos.html">Dirección General de Educación Indígena (DGEI)</a>, no obstante, el desempeño de esta institución no fue apropiado sino hasta el 2009 con <a href="https://inicialsayra.weebly.com/uploads/3/1/1/9/31192859/programa_de_educacion_inicial_y_basica_para_poblaciones_indigenas.pdf">la reformulación de sus políticas</a>. Con ello, las escuelas indígenas (que ya tenían años en funcionamiento) pasaron a cumplir un rol más activo en la formación de su población objetivo. Estas escuelas tienen como fin proveer un ambiente educativo ideal para aquellas poblaciones, no sólo mediante el dictado de clases en lenguas originarias, sino también incorporando sus culturas como parte del currículo.</p>
+<p>Datos del <a href="https://www.inegi.org.mx/app/indicadores/?t=123&amp;ag=00#divFV6207019014">2015</a> indican que la población indígena ha crecido en comparación a las estimaciones anteriores del Banco Central, representando en dicho año el 21.5% de la población mexicana. Motivado por la importancia de la población indígena en México, a continuación se desarrollará un breve análisis exploratorio sobre las condiciones educativas actuales de la población indígena y el rol que cumplen las escuelas indígenas. Dado que no hay encuestas con datos recientes sobre el desempeño de la población indígena en educación, usaré “población con ascendencia indígena” y “población con lengua materna indígena” como proxys de esta.</p>
+<div id="cómo-se-distribuyen-las-escuelas-indígenas-en-el-territorio-nacional" class="section level3">
+<h3>¿Cómo se distribuyen las escuelas indígenas en el territorio nacional?</h3>
+<p>Para el año 2015, el número total de escuelas indígenas ascendía a un total de 20030, representando el 9% de todas las escuelas mexicanas. Tal como se puede ver en el siguiente mapa, la mayoría de estas están distribuidas en las zonas noroeste y sureste del país. La gran mayoría de municipios no cuenta con ninguna escuela indígena. Esto no necesariamente debe significar algo negativo, pues la oferta educativa debe ir acorde a la demanda de la población.</p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
-</div>
-<div id="mapa-de-población-indígena-por-distrito" class="section level1">
-<h1>Mapa de población indígena por distrito</h1>
+<p>En ese sentido, mediante el siguiente mapa podemos observar que la población indígena está distribuida de forma similar a los colegios. La mayoría de municipios tienen un escaso o nulo número de personas indígenas. Los estados con mayor condensación de población indígena son los sureños: Chiapas, Quintana Roo y Yucatan. Consecuentemente, estos son también los estados con un mayor número de escuelas indígenas.</p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>La similitud entre la distribución de las escuelas indígenas y la distribución de la población indígena es una primera buena señal de que se ha logrado una correcta focalización mediante la implementación de estas escuelas. En ese sentido, se esperaría que a ellas asistan la gran mayoría de alumnos que se identifiquen como pertenecientes a alguna comunidad indígena o que tengan como lengua materna una distinta al castellano. Sin embargo, esto no es del todo cierto.</p>
+<p>La <a href="https://www.inee.edu.mx/wp-content/uploads/2019/08/Caracteristicas-Generales-de-la-ETEL-2015.pdf">encuesta sobre trayectorias educativas y laborales aplicada en el 2015 a una muestra de jóvenes residentes de las Zonas Metropolitanas del Valle de México, Monterrey y Veracruz</a>, indica que sólo el 9% de los encuestados que tenían ascendencia indígena asistieron a una escuela indígena. Si bien esta no es una muestra representativa a nivel país y además, no todo descendiente indígena se identifica como población indígena, da luces de que podrían existir problemas de focalización en estas escuelas, siendo que, para el 2010, tan sólo Veracruz era el tercer estado con mayor población indígena y el tercer estado con más escuelas indígenas (según datos del 2017). Es decir, la ubicación de las escuelas en los determinados estado era correcta, más no su capacidad para captar a la población objetivo.</p>
 </div>
-<div id="porcentaje-de-alumnos-repitentes" class="section level1">
-<h1>Porcentaje de alumnos repitentes</h1>
+<div id="existen-diferencias-en-el-logro-académico" class="section level3">
+<h3>¿Existen diferencias en el logro académico?</h3>
+<p>En cuanto al desempeño educativo de la población con ascendencia indígena, la misma encuesta del 2015 nos permite saber que sólo el 44.9% de ellos ha repetido al menos una vez algún año de estudio, frente a un 54.4% del resto de la población. Esto indicaría que el desempeño educativo es mejor para quienes tienen ascendencia indígena, incluso si no se encuentran estudiando en una escuela indígena.</p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-</div>
-<div id="nivel-educativo-alcanzado" class="section level1">
-<h1>Nivel educativo alcanzado</h1>
+<p>Para complementar el análisis anterior, observemos el máximo nivel educativo alcanzado por cada grupo. El porcentaje de la población indígena que alcanza niveles de educación bajos es, por lo general, mayor que el porcentaje de la población no indígena en dichos niveles. Contrariamente, para niveles superiores, una menor proporción de la población indígena alcanza dicho logro educativo. La diferencia mas notoria se encuentra en la población con nivel profesional, siendo sólo el 15% de la población indígena, frente a el 26% de la población no indígena. Este gráfico permite concluir que, aunque el desempeño en la escuela puede ser superior para la población indígena, su logro educativo es inferior. Debido muy probablemente a menores oportunidades.</p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p> </p>
+<p> </p>
 </div>
-<div id="scatterplot-desempeño-en-planea-vs.-porcentaje-de-población-indígena" class="section level1">
-<h1>Scatterplot desempeño en PLANEA vs. Porcentaje de población indígena</h1>
+<div id="estudiar-en-escuelas-indígenas-genera-mejores-resultados" class="section level3">
+<h3>¿Estudiar en escuelas indígenas genera mejores resultados?</h3>
+<p>Finalmente, veamos los resultados de aprendizaje en poblaciones indígenas a partir de la prueba <a href="https://www.inee.edu.mx/wp-content/uploads/2019/07/Resultados2017-1.pdf">PLANEA 2017</a> aplicada a alumnos de secundaria.</p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-<p>¿Estudiar en escuela indígena genera mejores resultados?</p>
+<p>Tanto en Lenguaje y Comunicación como en Matemáticas, el puntaje promedio obtenido por escuela disminuye a medida que el porcentaje de hablantes de alguna lengua indígena aumenta. Este es un resultado esperable. Al no tener los medios para aprender en su lengua materna, estudiar será considerablemente más complicado. Sin embargo, las escuelas indígenas existen precisamente para solucionar este problema. Lo esperable sería que a medida que aumenta el porcentaje de alumnos hablantes de lengua originaria dentro de escuelas indígenas, los resultados de aprendizaje no disminuyan.</p>
+<p>Para comprobar ello, el siguiente gráfico toma los resultados de la prueba <a href="https://www.inee.edu.mx/wp-content/uploads/2019/07/Resultados2018.pdf">PLANEA 2018</a> para primaria y separa a las escuelas entre indígenas y regulares.</p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p>Mediante el ajuste de un modelo lineal simple, los gráficos muestran un efecto ambiguo en los resultados de los alumnos de escuelas indígenas. Por un lado se cumple el supuesto anterior: en las escuelas indígenas el puntaje no varía a medida que aumenta el porcentaje de alumnos que hablan una lengua indígena. No sucede lo mismo con las escuelas regulares. Sin embargo, el puntaje, a pesar de no variar mucho, se mantiene bajo. En ese sentido, las escuelas regulares tienen mejores resultados incluso cuando la mitad del alumnado habla alguna lengua indígena. Las escuelas indígenas recién superan en resultado (aunque muy ligeramente) a las regulares cuando la totalidad del alumnado habla lenguas indígenas.</p>
+<p>La conclusión a la que lleva esta revisión de datos es que las escuelas indígenas en México aún tienen mucho por mejorar. La oferta educativa parece estar bien distribuida, pero no logra alcanzar a toda su población objetivo. Tan importante como ello, no parecen haber efectos realmente positivos en la educación impartidas dentro de estas escuelas.</p>
+<p>Es necesario señalar que esta ha sido una simple revisión de datos brutos. Un correcto análisis sobre la eficiencia de las escuelas indígenas requiere de un estudio complejo como una evaluación de impacto.</p>
 </div>
